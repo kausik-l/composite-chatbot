@@ -32,9 +32,9 @@ def verify_causal_logic(file_path):
     errors = df[ (df['Z_race'] > 0) & (df['T'] == 0) ]
     
     if len(errors) == 0:
-        print("✅ SUCCESS: In 100% of cases where Race is defined, T=1.")
+        print("SUCCESS: In 100% of cases where Race is defined, T=1.")
     else:
-        print(f"❌ FAIL: Found {len(errors)} rows where Race is defined but Name is missing.")
+        print(f"FAIL: Found {len(errors)} rows where Race is defined but Name is missing.")
 
     # ---------------------------------------------------------
     # TEST 2: The Pronoun Exception (Z_gender -> T)
