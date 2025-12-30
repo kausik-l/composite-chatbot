@@ -9,7 +9,7 @@ from tqdm import tqdm
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
-API_URL = "http://localhost:8000/chat"
+API_URL = "http://13.59.191.223:8000/chat"
 SYSTEM_PROMPT = "s2"
 MAX_CONSECUTIVE_ERRORS = 5  # Stop script if this many fail in a row
 
@@ -19,7 +19,7 @@ FILES = {
     "da": "data/processed/processed_hiv_rt_da.csv",
 }
 
-OUTPUT_FILE = "data/responses/s2_no_sum_responses.csv"
+OUTPUT_FILE = "data/responses/responses.csv"
 
 # ---------------------------------------------------------
 # HELPER FUNCTIONS
