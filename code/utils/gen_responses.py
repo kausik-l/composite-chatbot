@@ -10,7 +10,7 @@ from tqdm import tqdm
 # CONFIGURATION
 # ---------------------------------------------------------
 API_URL = "http://13.59.191.223:8000/chat"
-SYSTEM_PROMPT = "s1"
+SYSTEM_PROMPT = "s2"
 MAX_CONSECUTIVE_ERRORS = 5  # Stop script if this many fail in a row
 
 FILES = {
