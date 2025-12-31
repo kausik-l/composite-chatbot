@@ -1,0 +1,4 @@
+# ML / HuggingFace / sentence-transformers cache
+local_model_cache/
+models/
+.cache/
