@@ -6,8 +6,8 @@ import os
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
-INPUT_FILE = 'data/outcome/safechat.csv'
-OUTPUT_DIR = 'results/plots'
+INPUT_FILE = 'data/outcome/s2_no_sum.csv'
+OUTPUT_DIR = 'results/plots/s2_no_sum'
 
 # Mapping codes to readable labels
 RACE_LABELS = {0: 'Baseline', 1: 'African American', 2: 'European American'}
