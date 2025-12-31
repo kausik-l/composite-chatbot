@@ -1,0 +1,10 @@
+Reward Mode,Agent,Avg Reward,Avg WRS,Avg DIE,Top Pipeline
+BOTH,Q-Learning,-5.2,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Fixed (Default),-5.8,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Random,-5.88,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+DIE,Q-Learning,-5.2,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Random,-5.763999999999999,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Fixed (Default),-5.8,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Q-Learning,-5.2,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Fixed (Default),-5.8,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Random,-5.806,0.0,0.0,para_spanish -> sys_s3 -> sum_yes

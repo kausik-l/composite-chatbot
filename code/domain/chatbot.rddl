@@ -1,0 +1,58 @@
+domain chatbot_pipeline {
+    
+    types {
+        stage : object;
+        component : object; 
+    };
+
+    pvariables {
+        // Topology
+        valid_component(stage, component) : { non-fluent, bool, default = false };
+        next_stage(stage, stage)          : { non-fluent, bool, default = false };
+        is_final_stage(stage)             : { non-fluent, bool, default = false };
+        
+        // Costs
+        // Paraphrasing has a cost (API calls).
+        // Model inference has a cost (compute).
+        // Summarization has a cost (compute).
+        component_cost(component)         : { non-fluent, real, default = 0.0 };
+
+        // State
+        current_stage(stage)              : { state-fluent, bool, default = false };
+        pipeline_done                     : { state-fluent, bool, default = false };
+
+        // Action
+        select_component(component)       : { action-fluent, bool, default = false };
+    };
+
+    cpfs {
+        // Transition to the next stage if a valid component is selected for the current stage.
+        current_stage'(?next) = 
+            if (pipeline_done) then false
+            else if (exists_{?curr : stage, ?c : component} [
+                current_stage(?curr) ^ select_component(?c) ^ next_stage(?curr, ?next)
+            ]) then true
+            // If no action is taken or invalid action, stay in next stage if logic dictates (or just end)
+            // But standard RDDL transition:
+            else if (current_stage(?next) ^ ~(exists_{?c : component} [select_component(?c)])) then true
+            else false; 
+
+        // Pipeline is done if we select a component at the final stage.
+        pipeline_done' = 
+            pipeline_done | 
+            exists_{?s : stage, ?c : component} [
+                current_stage(?s) ^ is_final_stage(?s) ^ select_component(?c)
+            ];
+    };
+
+    action-preconditions {
+        // Can only select a component valid for the current stage.
+        forall_{?c : component} [
+            select_component(?c) => exists_{?s : stage} [current_stage(?s) ^ valid_component(?s, ?c)]
+        ];
+    };
+
+    // Reward = Negative Cost of the selected component.
+    // Fairness/Utility rewards are added externally by the Python Environment based on the resulting data.
+    reward = sum_{?c : component} [ -component_cost(?c) * select_component(?c) ];
+}

@@ -1,0 +1,64 @@
+non-fluents nf_chatbot {
+    domain = chatbot_pipeline;
+    objects {
+        stage : {s1, s2, s3};
+        component : {
+            // Stage 1: Paraphrasing
+            para_none, para_spanish, para_danish,
+            
+            // Stage 2: Model System
+            sys_s1, sys_s2, sys_s3,
+            
+            // Stage 3: Summarization
+            sum_yes, sum_no
+        };
+    };
+    
+    non-fluents {
+        // Topology: s1 -> s2 -> s3
+        next_stage(s1, s2);
+        next_stage(s2, s3);
+        is_final_stage(s3);
+
+        // Stage 1: Paraphrasing Choices
+        valid_component(s1, para_none);
+        valid_component(s1, para_spanish);
+        valid_component(s1, para_danish);
+
+        // Stage 2: System Choices
+        valid_component(s2, sys_s1);
+        valid_component(s2, sys_s2);
+        valid_component(s2, sys_s3);
+        
+        // Stage 3: Summarization Choices
+        valid_component(s3, sum_yes);
+        valid_component(s3, sum_no);
+
+        // --- COSTS ---
+        // Paraphrasing costs (e.g., translation API latency/cost)
+        component_cost(para_none)    = 0.0;
+        component_cost(para_spanish) = 0.5; 
+        component_cost(para_danish)  = 0.5;
+        
+        // System inference costs (assuming similar compute, but maybe bigger models cost more)
+        component_cost(sys_s1)       = 0.6;
+        component_cost(sys_s2)       = 0.2;
+        component_cost(sys_s3)       = 0.4;
+        
+        // Summarization costs (extra inference step)
+        component_cost(sum_yes)      = 0.2;
+        component_cost(sum_no)       = 0.0;
+    };
+}
+
+instance chatbot_inst_1 {
+    domain = chatbot_pipeline;
+    non-fluents = nf_chatbot;
+    init-state {
+        current_stage(s1);
+        pipeline_done = false;
+    };
+    max-nondef-actions = 1;
+    horizon = 5; // s1->s2->s3->done
+    discount = 1.0;
+}

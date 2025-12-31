@@ -1,0 +1,451 @@
+Reward Mode,Agent,Episode,Total Reward,WRS,DIE,Cost,Pipeline
+WRS,Q-Learning,0,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,1,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,2,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,3,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,4,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,5,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,6,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,7,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,8,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,9,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,10,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,11,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,12,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,13,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,14,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,15,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,16,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,17,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,18,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,19,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,20,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,21,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,22,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,23,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,24,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,25,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,26,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,27,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,28,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,29,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,30,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,31,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,32,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,33,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,34,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,35,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,36,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,37,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,38,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,39,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,40,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,41,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,42,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,43,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,44,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,45,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,46,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,47,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,48,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Q-Learning,49,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Random,0,-5.9,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_no
+WRS,Random,1,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+WRS,Random,2,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+WRS,Random,3,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+WRS,Random,4,-5.9,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_yes
+WRS,Random,5,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+WRS,Random,6,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+WRS,Random,7,-5.9,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_yes
+WRS,Random,8,-6.3,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_yes
+WRS,Random,9,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+WRS,Random,10,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,11,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,12,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,13,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+WRS,Random,14,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+WRS,Random,15,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+WRS,Random,16,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+WRS,Random,17,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,18,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+WRS,Random,19,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+WRS,Random,20,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,21,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Random,22,-5.9,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_no
+WRS,Random,23,-6.3,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_yes
+WRS,Random,24,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Random,25,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Random,26,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,27,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,28,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+WRS,Random,29,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,30,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+WRS,Random,31,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+WRS,Random,32,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Random,33,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+WRS,Random,34,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+WRS,Random,35,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,36,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+WRS,Random,37,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+WRS,Random,38,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+WRS,Random,39,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+WRS,Random,40,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,41,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+WRS,Random,42,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+WRS,Random,43,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+WRS,Random,44,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+WRS,Random,45,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+WRS,Random,46,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+WRS,Random,47,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+WRS,Random,48,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+WRS,Random,49,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+WRS,Fixed (Default),0,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),1,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),2,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),3,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),4,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),5,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),6,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),7,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),8,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),9,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),10,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),11,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),12,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),13,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),14,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),15,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),16,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),17,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),18,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),19,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),20,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),21,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),22,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),23,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),24,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),25,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),26,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),27,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),28,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),29,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),30,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),31,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),32,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),33,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),34,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),35,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),36,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),37,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),38,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),39,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),40,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),41,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),42,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),43,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),44,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),45,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),46,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),47,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),48,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+WRS,Fixed (Default),49,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Q-Learning,0,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,1,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,2,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,3,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,4,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,5,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,6,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,7,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,8,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,9,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,10,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,11,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,12,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,13,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,14,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,15,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,16,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,17,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,18,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,19,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,20,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,21,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,22,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,23,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,24,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,25,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,26,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,27,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,28,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,29,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,30,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,31,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,32,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,33,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,34,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,35,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,36,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,37,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,38,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,39,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,40,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,41,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,42,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,43,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,44,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,45,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,46,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,47,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,48,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Q-Learning,49,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Random,0,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Random,1,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,2,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+DIE,Random,3,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+DIE,Random,4,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Random,5,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+DIE,Random,6,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,7,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+DIE,Random,8,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+DIE,Random,9,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Random,10,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+DIE,Random,11,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,12,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Random,13,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+DIE,Random,14,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+DIE,Random,15,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+DIE,Random,16,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+DIE,Random,17,-6.3,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_yes
+DIE,Random,18,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Random,19,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+DIE,Random,20,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+DIE,Random,21,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+DIE,Random,22,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Random,23,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+DIE,Random,24,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+DIE,Random,25,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,26,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+DIE,Random,27,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+DIE,Random,28,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+DIE,Random,29,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+DIE,Random,30,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+DIE,Random,31,-5.9,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_no
+DIE,Random,32,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+DIE,Random,33,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,34,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+DIE,Random,35,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+DIE,Random,36,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Random,37,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Random,38,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+DIE,Random,39,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+DIE,Random,40,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Random,41,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+DIE,Random,42,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Random,43,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Random,44,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+DIE,Random,45,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+DIE,Random,46,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+DIE,Random,47,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+DIE,Random,48,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+DIE,Random,49,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+DIE,Fixed (Default),0,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),1,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),2,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),3,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),4,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),5,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),6,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),7,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),8,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),9,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),10,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),11,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),12,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),13,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),14,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),15,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),16,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),17,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),18,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),19,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),20,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),21,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),22,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),23,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),24,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),25,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),26,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),27,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),28,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),29,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),30,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),31,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),32,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),33,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),34,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),35,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),36,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),37,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),38,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),39,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),40,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),41,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),42,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),43,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),44,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),45,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),46,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),47,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),48,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+DIE,Fixed (Default),49,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Q-Learning,0,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,1,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,2,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,3,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,4,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,5,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,6,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,7,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,8,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,9,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,10,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,11,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,12,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,13,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,14,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,15,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,16,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,17,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,18,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,19,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,20,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,21,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,22,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,23,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,24,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,25,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,26,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,27,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,28,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,29,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,30,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,31,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,32,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,33,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,34,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,35,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,36,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,37,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,38,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,39,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,40,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,41,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,42,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,43,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,44,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,45,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,46,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,47,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,48,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Q-Learning,49,-5.2,0.0,0.0,0.0,para_none -> sys_s2 -> sum_no
+BOTH,Random,0,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,1,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,2,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,3,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+BOTH,Random,4,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+BOTH,Random,5,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,6,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+BOTH,Random,7,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+BOTH,Random,8,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,9,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+BOTH,Random,10,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+BOTH,Random,11,-5.6,0.0,0.0,0.0,para_none -> sys_s1 -> sum_no
+BOTH,Random,12,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+BOTH,Random,13,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+BOTH,Random,14,-6.3,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_yes
+BOTH,Random,15,-5.9,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_no
+BOTH,Random,16,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,17,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+BOTH,Random,18,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+BOTH,Random,19,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+BOTH,Random,20,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+BOTH,Random,21,-5.7,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_no
+BOTH,Random,22,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,23,-5.9,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_yes
+BOTH,Random,24,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+BOTH,Random,25,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,26,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,27,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+BOTH,Random,28,-6.3,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_yes
+BOTH,Random,29,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Random,30,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+BOTH,Random,31,-5.9,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_yes
+BOTH,Random,32,-5.9,0.0,0.0,0.0,para_spanish -> sys_s2 -> sum_yes
+BOTH,Random,33,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+BOTH,Random,34,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+BOTH,Random,35,-5.6,0.0,0.0,0.0,para_none -> sys_s3 -> sum_yes
+BOTH,Random,36,-5.9,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_no
+BOTH,Random,37,-6.1,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_no
+BOTH,Random,38,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,39,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+BOTH,Random,40,-6.3,0.0,0.0,0.0,para_spanish -> sys_s1 -> sum_yes
+BOTH,Random,41,-6.1,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_yes
+BOTH,Random,42,-6.1,0.0,0.0,0.0,para_danish -> sys_s1 -> sum_no
+BOTH,Random,43,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,44,-5.4,0.0,0.0,0.0,para_none -> sys_s3 -> sum_no
+BOTH,Random,45,-5.9,0.0,0.0,0.0,para_spanish -> sys_s3 -> sum_no
+BOTH,Random,46,-6.1,0.0,0.0,0.0,para_danish -> sys_s3 -> sum_yes
+BOTH,Random,47,-5.4,0.0,0.0,0.0,para_none -> sys_s2 -> sum_yes
+BOTH,Random,48,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+BOTH,Random,49,-5.7,0.0,0.0,0.0,para_danish -> sys_s2 -> sum_no
+BOTH,Fixed (Default),0,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),1,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),2,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),3,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),4,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),5,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),6,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),7,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),8,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),9,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),10,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),11,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),12,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),13,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),14,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),15,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),16,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),17,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),18,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),19,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),20,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),21,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),22,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),23,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),24,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),25,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),26,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),27,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),28,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),29,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),30,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),31,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),32,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),33,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),34,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),35,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),36,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),37,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),38,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),39,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),40,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),41,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),42,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),43,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),44,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),45,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),46,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),47,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),48,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes
+BOTH,Fixed (Default),49,-5.8,0.0,0.0,0.0,para_none -> sys_s1 -> sum_yes

@@ -12,9 +12,9 @@ from tqdm import tqdm
 # CONFIGURATION
 # ---------------------------------------------------------
 MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
-RESPONSES_FILE = 'data/responses/s2_no_sum_responses.csv'
+RESPONSES_FILE = 'data/responses/s3_no_sum_responses.csv'
 MASTER_FILE = 'data/processed/processed_hiv.csv'
-OUTPUT_FILE = 'data/outcome/s2_no_sum.csv'
+OUTPUT_FILE = 'data/outcome/s3_no_sum.csv'
 
 def main():
     print("1. Loading Datasets...")
