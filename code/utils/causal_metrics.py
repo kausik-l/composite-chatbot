@@ -1,84 +1,90 @@
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.linear_model import Ridge
 
-# Suppress warnings for cleaner logs
+# Suppress warnings
 import warnings
 warnings.filterwarnings("ignore")
 
-def compute_arc_metrics(df, treatment_col, outcome_col, confounders, increase_pct=0.1):
+def compute_arc_metrics(df, treatment_col, outcome_col, confounders, model_type="linear"):
     """
-    Computes Causal Metrics based on the ARC Framework.
+    Computes Causal Metrics for BINARY Treatment (T=0 vs T=1).
     
-    Metrics:
-    1. ATE_Merit (True Utility): E[Y|do(T+)] - E[Y|do(T)]. 
-       The pure causal reward for merit, adjusted for confounders.
-    
-    2. Naive_Assoc (Observed Utility): E[Y|T+] - E[Y|T].
-       The simple correlation, contaminated by confounders.
-       
-    3. DIE_Confounding (Deconfounding Impact Estimation): | Naive - ATE |.
-       Measures the magnitude of the confounder's spurious influence.
-       
-    Returns: Dictionary with 'ATE_Merit', 'Naive_Assoc', and 'DIE_Confounding'.
+    Args:
+        model_type: "linear" (Ridge) or "tree" (GradientBoosting). 
     """
     
-    # 1. Causal Model (Adjusted for Z) -> Gives ATE (Merit)
-    # We control for confounders (Z) to isolate the effect of T.
+    # ---------------------------------------------------------
+    # 1. Causal Model (Adjusted for Z) -> ATE (Merit)
+    # ---------------------------------------------------------
     features = confounders + [treatment_col]
     X = df[features]
     y = df[outcome_col]
     
+    if model_type == "tree":
+        model_causal = HistGradientBoostingRegressor(max_iter=50, max_depth=5, random_state=42)
+    else:
+        model_causal = Ridge(alpha=1.0) # Linear model forces a coefficient for T
 
-    # Use fast HistGradientBoosting
-    model_causal = HistGradientBoostingRegressor(max_iter=50, max_depth=5, random_state=42)
-    ate_merit = 0.0
+    ate_causal = 0.0
     
     try:
         model_causal.fit(X, y)
         
-        # Predict Natural State
-        risk_now = model_causal.predict(X)
+        # Counterfactual: Force whole population to T=1
+        X_1 = X.copy()
+        X_1[treatment_col] = 1
+        pred_1 = model_causal.predict(X_1)
         
-        # Predict Counterfactual (Intervention on T)
-        X_cf = X.copy()
-        # T_new = T * 1.1 (Increase Merit by 10%), clipped to valid range [0, 1]
-        X_cf[treatment_col] = np.clip(X_cf[treatment_col] * (1 + increase_pct), 0, 1)
+        # Counterfactual: Force whole population to T=0
+        X_0 = X.copy()
+        X_0[treatment_col] = 0
+        pred_0 = model_causal.predict(X_0)
         
-        risk_cf = model_causal.predict(X_cf)
+        # ATE = Mean difference
+        ate_causal = np.mean(pred_1 - pred_0)
         
-        ate_merit = np.mean(risk_cf - risk_now)
     except Exception as e:
-        print(f"Error in ATE Merit calculation: {e}")
+        # print(f"Error in ATE calculation: {e}")
         pass
 
-    # 2. Naive Model (Ignored Z) -> Gives Naive Association
-    # We IGNORE confounders (Z) and look only at T -> Y.
+    # ---------------------------------------------------------
+    # 2. Naive Model (Ignored Z) -> Naive Association
+    # ---------------------------------------------------------
     X_naive = df[[treatment_col]]
     
-    model_naive = HistGradientBoostingRegressor(max_iter=50, max_depth=5, random_state=42)
+    if model_type == "tree":
+        model_naive = HistGradientBoostingRegressor(max_iter=50, max_depth=5, random_state=42)
+    else:
+        model_naive = Ridge(alpha=1.0)
+
     naive_assoc = 0.0
     
     try:
         model_naive.fit(X_naive, y)
         
-        risk_now_naive = model_naive.predict(X_naive)
+        X_naive_1 = X_naive.copy()
+        X_naive_1[treatment_col] = 1
+        pred_naive_1 = model_naive.predict(X_naive_1)
         
-        X_cf_naive = X_naive.copy()
-        X_cf_naive[treatment_col] = np.clip(X_cf_naive[treatment_col] * (1 + increase_pct), 0, 1)
+        X_naive_0 = X_naive.copy()
+        X_naive_0[treatment_col] = 0
+        pred_naive_0 = model_naive.predict(X_naive_0)
         
-        risk_cf_naive = model_naive.predict(X_cf_naive)
+        naive_assoc = np.mean(pred_naive_1 - pred_naive_0)
         
-        naive_assoc = np.mean(risk_cf_naive - risk_now_naive)
     except Exception as e:
+        # print(f"Error in Naive calculation: {e}")
         pass
 
-    # 3. Compute DIE (The Gap)
-    # Ideally, we want Naive to equal Causal (meaning Z doesn't distort the view of T).
-    die_confounding = abs(naive_assoc - ate_merit)
+    # ---------------------------------------------------------
+    # 3. Compute DIE (Confounding Bias)
+    # ---------------------------------------------------------
+    die_confounding = abs(naive_assoc - ate_causal)
     
     return {
-        "ATE_Merit": ate_merit,
+        "ATE": ate_causal,
         "Naive_Assoc": naive_assoc,
         "DIE_Confounding": die_confounding
     }
@@ -86,35 +92,30 @@ def compute_arc_metrics(df, treatment_col, outcome_col, confounders, increase_pc
 def compute_direct_effect(df, treatment_col, outcome_col, confounders):
     """
     Computes the Direct Effect (ATE) of the Protected Attribute (Z).
-    E[Y|do(Z=1)] - E[Y|do(Z=0)].
-    We want this to be close to 0 for fairness.
     """
     features = confounders + [treatment_col]
     X = df[features]
     y = df[outcome_col]
     
-    model = HistGradientBoostingRegressor(max_iter=50, max_depth=5, random_state=42)
+    # Use Ridge for consistency if we switched above, or stick to Tree for non-linearity
+    model = Ridge(alpha=1.0) 
     
     try:
         model.fit(X, y)
         
-        # Counterfactual 1: Everyone is Group 0
+        # We need to know WHICH confounder to flip. 
+        # Assuming Z_race is the first one or we flip all Zs?
+        # Let's assume we are measuring the effect of the FIRST confounder.
+        target_z = confounders[0]
+        
         X_0 = X.copy()
-        X_0[treatment_col] = 0
+        X_0[target_z] = 0
         pred_0 = model.predict(X_0)
         
-        # Counterfactual 2: Everyone is Group 1
         X_1 = X.copy()
-        X_1[treatment_col] = 1
+        X_1[target_z] = 1
         pred_1 = model.predict(X_1)
         
-        # ATE is the average difference
         return np.mean(pred_1 - pred_0)
     except Exception as e:
-        print(f"Error in Direct Effect calculation: {e}")
         return 0.0
-
-# Legacy alias for backward compatibility (if needed by old notebooks/scripts)
-# This maps the old function name to ATE_Merit (Utility)
-def compute_die(df, treatment_col, outcome_col, confounders, increase_pct=0.1):
-    return compute_arc_metrics(df, treatment_col, outcome_col, confounders, increase_pct)['ATE_Merit']

@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from collections import Counter
+import time
 
 # Add root to path so imports work
 root = os.path.dirname(os.path.abspath(__file__))
@@ -18,171 +20,213 @@ from planner.baselines import ChatbotRandomPipelinePlanner, ChatbotFixedPipeline
 # =============================================================================
 CONFIG = {
     "ACTIVE_MODES": ["WRS", "DIE", "BOTH"], 
-    "TRAIN_EPISODES": 200, 
-    "EVAL_EPISODES": 50,
-    "DATA_DIR": os.path.join(root, "data", "outcome"),
+    "TRAIN_EPISODES": 20, 
+    "EVAL_EPISODES": 500,
+    "DATA_DIR": os.path.join(root,"..", "data", "outcome"),
     "DOMAIN_PATH": os.path.join(root, "domain", "chatbot.rddl"),
     "INSTANCE_PATH": os.path.join(root, "instances", "chatbot_instance.rddl"),
     "LOG_FILE": "chatbot_evaluation_log.csv"
 }
 
-# Mapping Stages to Components (must match RDDL)
+# Mapping Stages to Components
 STAGE_MAP = {
     "s1": ["para_none", "para_spanish", "para_danish"],
     "s2": ["sys_s1", "sys_s2", "sys_s3"],
     "s3": ["sum_yes", "sum_no"]
 }
 
-def run_experiment():
-    print(f"=== Chatbot Pipeline Experiment ===")
+def run_experiment_full_trace():
+    print(f"=== Chatbot Pipeline Experiment (Structure: Sentiment Large) ===")
     
     if not os.path.exists(CONFIG["DATA_DIR"]):
         print(f"Error: Data directory {CONFIG['DATA_DIR']} not found.")
         os.makedirs(CONFIG["DATA_DIR"], exist_ok=True)
         print("Created empty data directory. Please put CSV files there.")
+        return
+
+    # Initialize Env just for reading dimensions/setup if needed
+    env = ChatbotPipelineEnv(
+        domain_file=CONFIG["DOMAIN_PATH"], 
+        instance_file=CONFIG["INSTANCE_PATH"], 
+        data_dir=CONFIG["DATA_DIR"], 
+        reward_mode="BOTH"
+    )
+
+    # 1. Build Agents List
+    agents = []
+    
+    # Q-Learning Agents
+    colors = {"WRS": "blue", "DIE": "orange", "BOTH": "green"}
+    for mode in CONFIG["ACTIVE_MODES"]:
+        agents.append({
+            "name": f"Q-Learning ({mode})",
+            "agent": ChatbotContextAwareQPlanner(action_space=None, stage_map=STAGE_MAP, alpha=0.1, gamma=0.99, epsilon=0.2),
+            "learns": True,
+            "train_mode": mode,
+            "color": colors.get(mode, "black")
+        })
+
+    # Baselines (Evaluated under BOTH mode)
+    agents.extend([
+        {"name": "Fixed (Default)", "agent": ChatbotFixedPipelinePlanner(STAGE_MAP, selection_index=0), "learns": False, "train_mode": "BOTH", "color": "purple"},
+        {"name": "Random", "agent": ChatbotRandomPipelinePlanner(STAGE_MAP), "learns": False, "train_mode": "BOTH", "color": "gray"}
+    ])
+    
+    # Setup Trace File
+    if os.path.exists(CONFIG["LOG_FILE"]):
+        os.remove(CONFIG["LOG_FILE"])
 
     results_table = []
-    
-    # Global log list to store all episode details
-    global_logs = []
+    plot_data = {}
 
-    for mode in CONFIG["ACTIVE_MODES"]:
-        print(f"\n--- Evaluation for Reward Mode: {mode} ---")
+    # 2. Execution Loop
+    for entry in agents:
+        name = entry['name']
+        agent = entry['agent']
+        learns = entry['learns']
+        train_mode = entry['train_mode']
+        color = entry.get('color', 'black')
         
-        # 1. Setup Environment
-        env = ChatbotPipelineEnv(
-            domain_file=CONFIG["DOMAIN_PATH"], 
-            instance_file=CONFIG["INSTANCE_PATH"], 
-            data_dir=CONFIG["DATA_DIR"],
-            reward_mode=mode
-        )
+        print(f"\n--- Processing Agent: {name} ---")
         
-        # 2. Define Agents
-        agents = {}
-        
-        # Q-Learning Agent
-        q_agent = ChatbotContextAwareQPlanner(
-            action_space=None, 
-            stage_map=STAGE_MAP,
-            alpha=0.1, gamma=0.99, epsilon=0.2
-        )
-        agents["Q-Learning"] = q_agent
-
-        # Random Baseline
-        agents["Random"] = ChatbotRandomPipelinePlanner(STAGE_MAP)
-
-        # Fixed Baseline (Default: None -> S1 -> No Sum)
-        agents["Fixed (Default)"] = ChatbotFixedPipelinePlanner(STAGE_MAP, selection_index=0)
-        
-        # 3. Train Q-Learning Agent
-        print(f"Training Q-Learning Agent ({mode})...")
-        train_rewards = []
-        for _ in tqdm(range(CONFIG["TRAIN_EPISODES"]), desc="Training"):
-            obs, _ = env.reset()
-            done = False
-            ep_reward = 0
-            while not done:
-                action = q_agent.sample_action(obs)
-                next_obs, reward, done, _, _ = env.step(action)
-                q_agent.update(obs, action, reward, next_obs)
-                obs = next_obs
-                ep_reward += reward
-            train_rewards.append(ep_reward)
-        
-        # Switch Q-Agent to Greedy for Eval
-        q_agent.epsilon = 0.0
-
-        # 4. Evaluate ALL Agents
-        for agent_name, agent in agents.items():
-            eval_rewards = []
-            raw_wrs_list = []
-            raw_die_list = []
-            pipeline_counts = {}
-
-            # Run Eval Episodes
-            for i in range(CONFIG["EVAL_EPISODES"]):
-                obs, _ = env.reset()
-                done = False
-                ep_reward = 0
-                path = []
-                current_metrics = {}
-
-                while not done:
-                    action = agent.sample_action(obs)
-                    
-                    # Record path
-                    for k, v in action.items():
-                        if v == 1: path.append(k.split("___")[-1])
-
-                    next_obs, reward, done, _, info = env.step(action)
-                    # No update during eval for Q-Learning
-                    obs = next_obs
-                    ep_reward += reward
-                    
-                    if done and 'metrics' in info:
-                        current_metrics = info['metrics']
-
-                eval_rewards.append(ep_reward)
-                
-                # Get metrics with defaults
-                wrs = current_metrics.get('raw_wrs', 0.0)
-                die = current_metrics.get('raw_die', 0.0)
-                cost = current_metrics.get('rddl_cost', 0.0)
-                
-                raw_wrs_list.append(wrs)
-                raw_die_list.append(die)
-                
-                path_str = " -> ".join(path)
-                pipeline_counts[path_str] = pipeline_counts.get(path_str, 0) + 1
-                
-                # LOGGING
-                global_logs.append({
-                    "Reward Mode": mode,
-                    "Agent": agent_name,
-                    "Episode": i,
-                    "Total Reward": ep_reward,
-                    "WRS": wrs,
-                    "DIE": die,
-                    "Cost": cost,
-                    "Pipeline": path_str
-                })
-
-            # Stats
-            top_pipelines = sorted(pipeline_counts.items(), key=lambda x: x[1], reverse=True)[:1]
-            top_str = top_pipelines[0][0] if top_pipelines else "N/A"
+        # A. TRAINING PHASE
+        if learns:
+            print(f"  > Training with Reward Mode: {train_mode}")
+            env.reward_mode = train_mode
             
-            row = {
-                "Reward Mode": mode,
-                "Agent": agent_name,
-                "Avg Reward": np.mean(eval_rewards),
-                "Avg WRS": np.mean(raw_wrs_list),
-                "Avg DIE": np.mean(raw_die_list),
-                "Top Pipeline": top_str
-            }
-            results_table.append(row)
-        
-        # Plot Training Curve for Q-Learning
-        plt.plot(train_rewards, label=f"{mode}")
+            rewards = []
+            for _ in tqdm(range(CONFIG["TRAIN_EPISODES"]), desc="Train"):
+                state, _ = env.reset()
+                ep_reward = 0
+                while True:
+                    action = agent.sample_action(state)
+                    next_state, r, done, _, _ = env.step(action)
+                    agent.update(state, action, r, next_state)
+                    state = next_state
+                    ep_reward += r
+                    if done: break
+                rewards.append(ep_reward)
+            
+            # Store training curve
+            plot_data[name] = (rewards, color)
+            
+            # Freeze agent for eval
+            agent.epsilon = 0.0
 
-    # Final Output
-    plt.title("Q-Learning Training Rewards")
-    plt.xlabel("Episode")
-    plt.ylabel("Total Reward")
-    plt.legend()
-    plt.savefig("chatbot_training_curve.png")
-    
-    # Save Results Table
-    df_res = pd.DataFrame(results_table)
-    df_res = df_res.sort_values(by=["Reward Mode", "Avg Reward"], ascending=[True, False])
+        # B. EVALUATION PHASE (Always 'BOTH' for apples-to-apples)
+        print(f"  > Evaluating under 'BOTH' mode...")
+        env.reward_mode = "BOTH"
+        
+        current_agent_trace = []
+        eval_rewards = []
+        eval_costs = []
+        eval_wrs = []
+        eval_die = []
+        pipeline_choices = []
+        
+        for ep_idx in tqdm(range(CONFIG["EVAL_EPISODES"]), desc=f"Eval {name}"):
+            state, _ = env.reset()
+            stage_count = 1
+            
+            # Accumulators for this episode
+            ep_reward = 0
+            ep_cost = 0
+            ep_final_wrs = 0
+            ep_final_die = 0
+            
+            current_pipeline = []
+            
+            while True:
+                action = agent.sample_action(state)
+                
+                # Track pipeline path
+                selected_model_name = "None"
+                for k, v in action.items():
+                    if v == 1 and "select_component" in k:
+                        selected_model_name = k.split("___")[-1]
+                        current_pipeline.append(selected_model_name)
+                        break
+
+                next_state, r, done, _, info = env.step(action)
+                state = next_state
+                
+                ep_reward += r
+                
+                # ACCUMULATE METRICS STEP-BY-STEP (Like Sentiment script)
+                metrics = info.get('metrics', {})
+                ep_cost += metrics.get('rddl_cost', 0.0)
+                
+                # WRS and DIE only appear at the final step, but safe to overwrite/add 
+                # since they are 0.0 in non-final steps in this env.
+                ep_final_wrs = max(ep_final_wrs, metrics.get('raw_wrs', 0.0))
+                ep_final_die = max(ep_final_die, metrics.get('raw_die', 0.0))
+                
+                # Log Trace
+                current_agent_trace.append({
+                    "Agent": name,
+                    "Episode": ep_idx,
+                    "Stage": stage_count,
+                    "Action": selected_model_name,
+                    "Step_Reward": r,
+                    "Step_Cost": metrics.get('rddl_cost', 0.0),
+                    "Final_WRS": metrics.get('raw_wrs', 0.0),
+                    "Final_DIE": metrics.get('raw_die', 0.0)
+                })
+                
+                stage_count += 1
+                if done: break
+            
+            eval_rewards.append(ep_reward)
+            eval_costs.append(ep_cost)
+            eval_wrs.append(ep_final_wrs)
+            eval_die.append(ep_final_die)
+            pipeline_choices.append(tuple(current_pipeline))
+
+        # Save Trace incrementally
+        write_header = not os.path.exists(CONFIG["LOG_FILE"]) or os.path.getsize(CONFIG["LOG_FILE"]) == 0
+        df_chunk = pd.DataFrame(current_agent_trace)
+        if not df_chunk.empty:
+            df_chunk.to_csv(CONFIG["LOG_FILE"], mode='a', header=write_header, index=False)
+
+        # Top Pipeline
+        top3_str = "N/A"
+        if pipeline_choices:
+            counts = Counter(pipeline_choices).most_common(1)
+            pipe, count = counts[0]
+            pipe_str = " -> ".join(pipe)
+            top3_str = f"{pipe_str} ({count})"
+
+        # Store Result
+        row = {
+            "Agent": name,
+            "Train Mode": train_mode if learns else "N/A",
+            "Avg Reward": np.mean(eval_rewards),
+            "Avg Cost": np.mean(eval_costs),
+            "Avg WRS": np.mean(eval_wrs),
+            "Avg DIE": np.mean(eval_die),
+            "Top Pipeline": top3_str
+        }
+        results_table.append(row)
+
+    # 3. Output Table
+    df = pd.DataFrame(results_table)
     print("\n=== FINAL CHATBOT RESULTS ===")
-    print(df_res.to_string(index=False))
-    df_res.to_csv("chatbot_results.csv", index=False)
+    cols = ["Agent", "Avg Reward", "Avg Cost", "Avg WRS", "Avg DIE", "Top Pipeline"]
+    print(df[cols].to_string(index=False))
+    df.to_csv("chatbot_results_summary.csv", index=False)
     
-    # Save Detailed Log
-    log_filename = CONFIG.get("LOG_FILE", "chatbot_evaluation_log.csv")
-    df_log = pd.DataFrame(global_logs)
-    df_log.to_csv(log_filename, index=False)
-    print(f"\nDetailed evaluation log saved to {log_filename}")
+    # 4. Plot Training
+    if plot_data:
+        plt.figure(figsize=(10, 6))
+        for name, (rew, col) in plot_data.items():
+            smoothed = np.convolve(rew, np.ones(20)/20, mode='valid') if len(rew)>20 else rew
+            plt.plot(smoothed, label=name, color=col)
+        plt.title("Q-Learning Training Progress")
+        plt.xlabel("Episode")
+        plt.ylabel("Reward")
+        plt.legend()
+        plt.savefig("chatbot_training_curve.png")
+        print("\nSaved training curve to 'chatbot_training_curve.png'")
 
 if __name__ == "__main__":
-    run_experiment()
+    run_experiment_full_trace()

@@ -6,7 +6,7 @@ from env.metric_utils import calc_wrs
 from utils.causal_metrics import compute_arc_metrics
 
 class ChatbotPipelineEnv(RDDLEnv):
-    def __init__(self, domain_file, instance_file, data_dir, batch_size=100, reward_mode="WRS"):
+    def __init__(self, domain_file, instance_file, data_dir, batch_size=50, reward_mode="WRS"):
         super().__init__(domain=domain_file, instance=instance_file)
         
         self.data_dir = data_dir
@@ -29,6 +29,7 @@ class ChatbotPipelineEnv(RDDLEnv):
 
     def step(self, action):
         obs, rddl_reward, terminated, truncated, info = super().step(action)
+        # print("I am the reward:", rddl_reward)
         done = terminated or truncated
         
         # Identify Action from RDDL action dict
@@ -68,69 +69,72 @@ class ChatbotPipelineEnv(RDDLEnv):
             filename = f"s{sys_num}_{sum_suffix}.csv"
             filepath = os.path.join(self.data_dir, filename)
             
-            if os.path.exists(filepath):
-                # Load the specific dataset for this system configuration
-                full_df = pd.read_csv(filepath)
-                
-                # Sample a batch
-                n_sample = min(self.batch_size, len(full_df))
-                self.sampled_batch = full_df.sample(n=n_sample).copy()
-                
-                # 2. Determine which column to use based on Paraphrase choice
-                # para_none -> original_m_safechat_outcome
-                # para_spanish -> rt_es_m_safechat_outcome
-                # para_danish -> rt_da_m_safechat_outcome
-                
-                target_col = "original_m_safechat_outcome" # default
-                if self.current_paraphrase == "para_spanish":
-                    target_col = "rt_es_m_safechat_outcome"
-                elif self.current_paraphrase == "para_danish":
-                    target_col = "rt_da_m_safechat_outcome"
-                
-                # 3. Calculate Metrics (WRS / DIE)
-                # Protected Attribute: Z_race (1=AA, 2=EA, 0=None)
-                
-                if target_col in self.sampled_batch.columns:
-                    # WRS (Weighted Rejection Score)
-                    try:
-                        # We use Z_race. metric_utils treats >0 as "protected group"
-                        # Ideally we compare AA (1) vs Baseline (0) or AA (1) vs EA (2)
-                        # The generic calc_wrs checks abs(mean(Y|Z=1) - mean(Y|Z=0))
-                        # Here, Z=0 is Baseline (Anonymous). Z=1 is AA.
-                        wrs_race = calc_wrs(self.sampled_batch, 'Z_race', target_col)
-                        raw_wrs = wrs_race
-                    except: 
-                        raw_wrs = 0.0
+            # if os.path.exists(filepath):
+            # Load the specific dataset for this system configuration
+            full_df = pd.read_csv(filepath)
+            
+            # Sample a batch
+            n_sample = min(self.batch_size, len(full_df))
+            self.sampled_batch = full_df.sample(n=n_sample).copy()
+            
+            # 2. Determine which column to use based on Paraphrase choice
+            # para_none -> original_m_safechat_outcome
+            # para_spanish -> rt_es_m_safechat_outcome
+            # para_danish -> rt_da_m_safechat_outcome
+            
+            target_col = "original_m_safechat_outcome"
+            if self.current_paraphrase == "para_spanish":
+                target_col = "rt_es_m_safechat_outcome"
+            elif self.current_paraphrase == "para_danish":
+                target_col = "rt_da_m_safechat_outcome"
+            
+            # 3. Calculate Metrics (WRS / DIE)
+            # Protected Attribute: Z_race (1=AA, 2=EA, 0=None)
+            
+            if target_col in self.sampled_batch.columns:
+                # WRS (Weighted Rejection Score)
+                try:
+                    # We use Z_race. metric_utils treats >0 as "protected group"
+                    # Ideally we compare AA (1) vs Baseline (0) or AA (1) vs EA (2)
+                    # The generic calc_wrs checks abs(mean(Y|Z=1) - mean(Y|Z=0))
+                    # Here, Z=0 is Baseline (Anonymous). Z=1 is AA.
+                    wrs_race = calc_wrs(self.sampled_batch, 'Z_race', target_col)
+                    raw_wrs = wrs_race
+                except: 
+                    raw_wrs = 0.0
 
-                    # DIE (Causal Metric)
-                    # We need a treatment column T (which exists in your CSV)
-                    try:
-                        # T=0 (Anonymous), T=1 (Identity Revealed)
-                        metrics = compute_arc_metrics(
-                            self.sampled_batch, 
-                            treatment_col='T',       
-                            outcome_col=target_col, 
-                            confounders=['Z_race', 'Z_gender']
-                        )
-                        raw_die = abs(metrics['DIE_Confounding'])
-                    except: 
-                        raw_die = 0.0
+                # DIE (Causal Metric)
+                # We need a treatment column T (which exists in your CSV)
+                # try:
+                    # T=0 (Anonymous), T=1 (Identity Revealed)
+                metrics = compute_arc_metrics(
+                    self.sampled_batch, 
+                    treatment_col='T',       
+                    outcome_col=target_col, 
+                    confounders=['Z_race', 'Z_gender']
+                )
+                raw_die = abs(metrics['DIE_Confounding'])
+                raw_ate = abs(metrics['ATE'])
+                # except: 
+                #     raw_die = 0.0
 
-                    # 4. Apply Penalty
-                    if self.reward_mode == "WRS":
-                        fairness_penalty += (raw_wrs * 10.0)
-                    elif self.reward_mode == "DIE":
-                        fairness_penalty += (raw_die * 10.0)
-                    elif self.reward_mode == "BOTH":
-                        fairness_penalty += (raw_wrs * 5.0) + (raw_die * 5.0)
+                # 4. Apply Penalty
+                if self.reward_mode == "WRS":
+                    fairness_penalty += (raw_wrs * 100.0)
+                elif self.reward_mode == "DIE":
+                    fairness_penalty += (raw_die * 100.0)
+                elif self.reward_mode == "BOTH":
+                    fairness_penalty += (raw_wrs * 100.0) + (raw_die * 100.0)
 
-            else:
-                # File missing (e.g. s3_sum.csv not generated yet)
-                # Penalty for invalid path, but allow simulation to continue
-                fairness_penalty = 5.0 
+            # else:
+            #     # File missing (e.g. s3_sum.csv not generated yet)
+            #     # Penalty for invalid path, but allow simulation to continue
+            #     fairness_penalty = 5.0 
 
         # Total Reward = (Negative Cost from RDDL) - Fairness Penalty
         total_reward = rddl_reward - fairness_penalty 
+
+        # print("COST:",abs(rddl_reward))
         
         if 'metrics' not in info: info['metrics'] = {}
         info['metrics']['fairness_penalty'] = fairness_penalty
