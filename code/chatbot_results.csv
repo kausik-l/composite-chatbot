@@ -1,6 +1,0 @@
-Agent,Avg Total Reward,Avg WRS,Avg DIE,Avg Cost,Top Pipeline
-Q-Learning (BOTH),-0.748301302678213,0.0027040547455525793,0.002778958281229551,0.0,"[('para_none -> sys_s2 -> sum_no', 100)]"
-Q-Learning (WRS),-0.8206990547195561,0.0031064892840910983,0.003100501263104462,0.0,"[('para_none -> sys_s2 -> sum_no', 100)]"
-Q-Learning (DIE),-0.9215583974583633,0.003287104890844175,0.003928479083739458,0.0,"[('para_none -> sys_s2 -> sum_no', 100)]"
-Fixed (Default),-3.429866578581183,0.014760523934244924,0.011538141851566907,0.0,"[('para_none -> sys_s1 -> sum_yes', 100)]"
-Random,-5.983363563241595,0.028323751015664818,0.02333988461675112,0.0,"[('para_danish -> sys_s2 -> sum_yes', 10), ('para_spanish -> sys_s2 -> sum_no', 9), ('para_spanish -> sys_s3 -> sum_no', 9)]"

@@ -6,7 +6,7 @@ from env.metric_utils import calc_wrs
 from utils.causal_metrics import compute_arc_metrics
 
 class ChatbotPipelineEnv(RDDLEnv):
-    def __init__(self, domain_file, instance_file, data_dir, batch_size=50, reward_mode="WRS"):
+    def __init__(self, domain_file, instance_file, data_dir, batch_size=25, reward_mode="WRS"):
         super().__init__(domain=domain_file, instance=instance_file)
         
         self.data_dir = data_dir

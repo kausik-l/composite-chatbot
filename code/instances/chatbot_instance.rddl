@@ -36,15 +36,15 @@ non-fluents nf_chatbot {
         // --- COSTS ---
         // These costs will be returned as negative rewards by the RDDL simulator
         component_cost(para_none)    = 0.0;
-        component_cost(para_spanish) = 0.5; 
-        component_cost(para_danish)  = 0.5;
+        component_cost(para_spanish) = 0.2; 
+        component_cost(para_danish)  = 0.2;
         
-        component_cost(sys_s1)       = 0.6;
+        component_cost(sys_s1)       = 0.4;
         component_cost(sys_s2)       = 0.2;
-        component_cost(sys_s3)       = 0.4;
+        component_cost(sys_s3)       = 0.3;
         
         // Summarization Costs
-        component_cost(sum_sum1)     = 0.3; 
+        component_cost(sum_sum1)     = 0.2; 
         component_cost(sum_sum2)     = 0.1; // Extractive (Cheaper)
         component_cost(sum_no)       = 0.0; 
     };
@@ -58,6 +58,6 @@ instance chatbot_inst_1 {
         pipeline_done = false;
     };
     max-nondef-actions = 1;
-    horizon = 5;
+    horizon = 3;
     discount = 1.0;
 }

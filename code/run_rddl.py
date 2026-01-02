@@ -13,15 +13,16 @@ sys.path.append(root)
 
 from env.chatbot_env import ChatbotPipelineEnv
 from planner.policy import ChatbotContextAwareQPlanner
-from planner.baselines import ChatbotRandomPipelinePlanner, ChatbotFixedPipelinePlanner
+from planner.baselines import ChatbotRandomPipelinePlanner, ChatbotFixedPipelinePlanner, ChatbotLookaheadFairnessPlanner
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 CONFIG = {
     "ACTIVE_MODES": ["WRS", "DIE", "BOTH"], 
-    "TRAIN_EPISODES": 100, 
+    "TRAIN_EPISODES": 200, 
     "EVAL_EPISODES": 500,
+    "EVAL_TEMPERATURE": 0.1, 
     "DATA_DIR": os.path.join(root,"..", "data", "outcome"),
     "DOMAIN_PATH": os.path.join(root, "domain", "chatbot.rddl"),
     "INSTANCE_PATH": os.path.join(root, "instances", "chatbot_instance.rddl"),
@@ -59,19 +60,25 @@ def run_experiment_full_trace():
         })
 
     # Baselines
-    agents.extend([
-        {"name": "Fixed (Default)", "agent": ChatbotFixedPipelinePlanner(STAGE_MAP, selection_index=0), "learns": False, "train_mode": "BOTH", "color": "purple"},
-        {"name": "Random", "agent": ChatbotRandomPipelinePlanner(STAGE_MAP), "learns": False, "train_mode": "BOTH", "color": "gray"}
-    ])
+    # Note: Lookahead needs env instance, we will pass eval_env later or init a dummy one?
+    # Actually, we can't pass eval_env yet because it's created in the loop.
+    # We will instantiate Lookahead inside the loop or pass a shared env.
+    
+    # Let's add them as (Name, Class, Params) tuples to init later
+    baselines_meta = [
+        ("Fixed (Default)", ChatbotFixedPipelinePlanner, {"selection_index": 0}),
+        ("Random", ChatbotRandomPipelinePlanner, {}),
+        ("Heuristic (WRS Lookahead)", ChatbotLookaheadFairnessPlanner, {"env_needed": True})
+    ]
     
     if os.path.exists(CONFIG["LOG_FILE"]): os.remove(CONFIG["LOG_FILE"])
 
     results_table = []
-    
-    # Store training history for plotting
     plot_data = {} 
+    eval_plot_data = {} # Initialize eval_plot_data
 
     # 2. Execution Loop
+    # First process Q-Agents (Training)
     for entry in agents:
         name = entry['name']
         agent = entry['agent']
@@ -84,21 +91,19 @@ def run_experiment_full_trace():
         # A. TRAINING PHASE
         if learns:
             print(f"  > Training with Reward Mode: {train_mode}")
-            
-            # Use a specific env for training to capture metrics cleanly
             train_env = ChatbotPipelineEnv(
                 CONFIG["DOMAIN_PATH"], CONFIG["INSTANCE_PATH"], CONFIG["DATA_DIR"], reward_mode=train_mode
             )
             
-            # History lists for this agent
-            h_reward, h_wrs, h_die = [], [], []
-            
+            rewards = []
+            h_wrs, h_die = [], []
+
             for _ in tqdm(range(CONFIG["TRAIN_EPISODES"]), desc="Train"):
                 state, _ = train_env.reset()
                 ep_reward = 0
                 ep_final_wrs = 0.0
                 ep_final_die = 0.0
-                
+
                 while True:
                     action = agent.sample_action(state)
                     next_state, r, done, _, info = train_env.step(action)
@@ -106,47 +111,74 @@ def run_experiment_full_trace():
                     state = next_state
                     ep_reward += r
                     
-                    # Capture metrics if present (usually at end of pipeline)
                     if 'metrics' in info:
                         ep_final_wrs = max(ep_final_wrs, info['metrics'].get('raw_wrs', 0.0))
                         ep_final_die = max(ep_final_die, info['metrics'].get('raw_die', 0.0))
-                    
+
                     if done: break
                 
-                h_reward.append(ep_reward)
+                rewards.append(ep_reward)
                 h_wrs.append(ep_final_wrs)
                 h_die.append(ep_final_die)
             
-            # Store for plotting (FIXED: Using Dictionary)
+            # Store as dictionary for plotting access
             plot_data[name] = {
-                "Reward": h_reward,
+                "Reward": rewards,
                 "WRS": h_wrs,
                 "DIE": h_die,
                 "Color": color
             }
-            
-            # Freeze agent for eval
             agent.epsilon = 0.0
 
-        # B. EVALUATION PHASE
-        print(f"  > Evaluating under 'BOTH' mode...")
-        # Re-init env to ensure clean state and uniform evaluation criteria
-        eval_env = ChatbotPipelineEnv(
-            CONFIG["DOMAIN_PATH"], CONFIG["INSTANCE_PATH"], CONFIG["DATA_DIR"], reward_mode="BOTH"
-        )
+    # 3. EVALUATION PHASE (For ALL Agents including Baselines)
+    print(f"\n--- Starting Unified Evaluation (Mode: BOTH) ---")
+    
+    # Prepare Evaluation Environment
+    eval_env = ChatbotPipelineEnv(
+        CONFIG["DOMAIN_PATH"], CONFIG["INSTANCE_PATH"], CONFIG["DATA_DIR"], reward_mode="BOTH"
+    )
+    
+    # Add baselines to the list for evaluation
+    eval_agents_list = []
+    
+    # Add trained Q-Agents
+    for entry in agents:
+        eval_agents_list.append((entry['name'], entry['agent'], entry['color']))
+        
+    # Add/Init Baselines with colors
+    baseline_colors = {"Fixed (Default)": "purple", "Random": "gray", "Heuristic (WRS Lookahead)": "red"}
+    
+    for name, cls, params in baselines_meta:
+        if params.get("env_needed"):
+            # Pass eval_env to Lookahead
+            agent = cls(STAGE_MAP, env=eval_env)
+        else:
+            agent = cls(STAGE_MAP, **params)
+        eval_agents_list.append((name, agent, baseline_colors.get(name, "black")))
+
+    # Run Eval Loop
+    for agent_name, agent, color in eval_agents_list:
+        print(f"Evaluating {agent_name}...")
         
         current_agent_trace = []
+        # Metrics history for plotting
+        hist_reward, hist_wrs, hist_die, hist_comp = [], [], [], []
+        
         eval_rewards, eval_costs, eval_wrs, eval_die, eval_comp, eval_qual = [], [], [], [], [], []
         pipeline_choices = []
         
-        for ep_idx in tqdm(range(CONFIG["EVAL_EPISODES"]), desc=f"Eval {name}"):
+        for ep_idx in tqdm(range(CONFIG["EVAL_EPISODES"]), desc=f"Eval {agent_name}"):
             state, _ = eval_env.reset()
             stage_count = 1
             ep_reward, ep_cost, ep_final_wrs, ep_final_die, ep_final_comp, ep_final_qual = 0, 0, 0, 0, 0, 0
             current_pipeline = []
             
             while True:
-                action = agent.sample_action(state)
+                # Use SOFTMAX for Q-Agents to get variety, standard sample for Baselines
+                if isinstance(agent, ChatbotContextAwareQPlanner):
+                    action = agent.sample_action_softmax(state, temperature=CONFIG["EVAL_TEMPERATURE"])
+                else:
+                    action = agent.sample_action(state)
                 
                 selected_model_name = "None"
                 for k, v in action.items():
@@ -167,7 +199,7 @@ def run_experiment_full_trace():
                 ep_final_qual = max(ep_final_qual, metrics.get('quality_reward', 0.0))
                 
                 current_agent_trace.append({
-                    "Agent": name,
+                    "Agent": agent_name,
                     "Episode": ep_idx,
                     "Stage": stage_count,
                     "Action": selected_model_name,
@@ -181,6 +213,12 @@ def run_experiment_full_trace():
                 stage_count += 1
                 if done: break
             
+            # Store history
+            hist_reward.append(ep_reward)
+            hist_wrs.append(ep_final_wrs)
+            hist_die.append(ep_final_die)
+            hist_comp.append(ep_final_comp)
+
             eval_rewards.append(ep_reward)
             eval_costs.append(ep_cost)
             eval_wrs.append(ep_final_wrs)
@@ -188,14 +226,17 @@ def run_experiment_full_trace():
             eval_comp.append(ep_final_comp)
             eval_qual.append(ep_final_qual)
             pipeline_choices.append(tuple(current_pipeline))
+        
+        # Store in Eval Plot Data
+        eval_plot_data[agent_name] = {
+            "Reward": hist_reward, "WRS": hist_wrs, "DIE": hist_die, "Comp": hist_comp, "Color": color
+        }
 
-        # Save Trace
         write_header = not os.path.exists(CONFIG["LOG_FILE"]) or os.path.getsize(CONFIG["LOG_FILE"]) == 0
         df_chunk = pd.DataFrame(current_agent_trace)
         if not df_chunk.empty:
             df_chunk.to_csv(CONFIG["LOG_FILE"], mode='a', header=write_header, index=False)
 
-        # Top 3 Pipelines Logic
         top3_str = "N/A"
         if pipeline_choices:
             counts = Counter(pipeline_choices).most_common(3)
@@ -205,10 +246,9 @@ def run_experiment_full_trace():
                 parts.append(f"{pipe_str} ({count})")
             top3_str = "; ".join(parts)
 
-        # Result Row
         results_table.append({
-            "Agent": name,
-            "Train Mode": train_mode if learns else "N/A",
+            "Agent": agent_name,
+            "Train Mode": "N/A", # Simplified for summary
             "Avg Reward": np.mean(eval_rewards),
             "Avg Cost": np.mean(eval_costs),
             "Avg WRS": np.mean(eval_wrs),
@@ -218,53 +258,48 @@ def run_experiment_full_trace():
             "Top Pipeline": top3_str
         })
 
-    # 3. Output Table
+    # 4. Output Table
     df = pd.DataFrame(results_table)
     print("\n=== FINAL CHATBOT RESULTS ===")
     print(df[["Agent", "Avg Reward", "Avg Quality", "Avg Compression", "Avg WRS", "Avg DIE", "Top Pipeline"]].to_string(index=False))
     df.to_csv("chatbot_results_summary.csv", index=False)
     
-    # 4. Generate Multi-Panel Training Plot
-    if plot_data:
-        fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    # 5. PLOTTING FUNCTION (Generic for both phases)
+    def plot_metrics(data_dict, filename, title_prefix):
+        if not data_dict: return
+        fig, axes = plt.subplots(2, 2, figsize=(16, 10))
         
-        # Helper to smooth lines
-        def smooth_data(data, window=20):
-            if len(data) > window:
-                return np.convolve(data, np.ones(window)/window, mode='valid')
-            return data
+        def smooth_data(d, window=10):
+            if len(d) > window: return np.convolve(d, np.ones(window)/window, mode='valid')
+            return d
 
-        # Plot 1: Total Reward
-        for name, data in plot_data.items():
-            rew = data["Reward"]
-            smooth = smooth_data(rew)
-            axes[0].plot(smooth, label=name, color=data["Color"])
-        axes[0].set_title("Total Reward (Smoothed)")
-        axes[0].set_xlabel("Episode")
-        axes[0].set_ylabel("Reward")
-        axes[0].legend()
+        for name, d in data_dict.items():
+            axes[0,0].plot(smooth_data(d["Reward"]), label=name, color=d["Color"])
+        axes[0,0].set_title(f"{title_prefix} Total Reward")
+        axes[0,0].legend()
 
-        # Plot 2: WRS Metric
-        for name, data in plot_data.items():
-            wrs = data["WRS"]
-            smooth = smooth_data(wrs)
-            axes[1].plot(smooth, label=name, color=data["Color"])
-        axes[1].set_title("WRS Metric (Smoothed)")
-        axes[1].set_xlabel("Episode")
-        axes[1].set_ylabel("WRS Value")
+        for name, d in data_dict.items():
+            axes[0,1].plot(smooth_data(d["WRS"]), label=name, color=d["Color"])
+        axes[0,1].set_title(f"{title_prefix} WRS Metric")
 
-        # Plot 3: DIE Metric
-        for name, data in plot_data.items():
-            die = data["DIE"]
-            smooth = smooth_data(die)
-            axes[2].plot(smooth, label=name, color=data["Color"])
-        axes[2].set_title("DIE Metric (Smoothed)")
-        axes[2].set_xlabel("Episode")
-        axes[2].set_ylabel("DIE Value")
+        for name, d in data_dict.items():
+            axes[1,0].plot(smooth_data(d["DIE"]), label=name, color=d["Color"])
+        axes[1,0].set_title(f"{title_prefix} DIE Metric")
+        
+        has_comp = False
+        for name, d in data_dict.items():
+            if "Comp" in d and d["Comp"]:
+                axes[1,1].plot(smooth_data(d["Comp"]), label=name, color=d["Color"])
+                has_comp = True
+        if has_comp: axes[1,1].set_title(f"{title_prefix} Compression Reward")
+        else: axes[1,1].set_visible(False)
 
         plt.tight_layout()
-        plt.savefig("chatbot_training_metrics.png")
-        print("\nSaved multi-panel training plots to 'chatbot_training_metrics.png'")
+        plt.savefig(filename)
+        print(f"\nSaved plots to '{filename}'")
+
+    plot_metrics(plot_data, "chatbot_training_metrics.png", "Training")
+    plot_metrics(eval_plot_data, "chatbot_evaluation_metrics.png", "Evaluation")
 
 if __name__ == "__main__":
     run_experiment_full_trace()
