@@ -1,154 +1,164 @@
-import os
-import sys
-
-# CRITICAL FIX: Set HF_HOME to a local directory to avoid Permission Errors
-# This forces the model to download to a folder we know we can write to.
-os.environ['HF_HOME'] = './local_model_cache'
-
 import pandas as pd
 from transformers import pipeline
+from summarizer import Summarizer
 import torch
 from tqdm import tqdm
-
-# Try to import the extractive summarizer library
-try:
-    from summarizer import Summarizer
-except ImportError:
-    print("\n[ERROR] The 'bert-extractive-summarizer' library is missing.")
-    print("Please install it using the following command:")
-    print("pip install bert-extractive-summarizer")
-    sys.exit(1)
+import os
+import sys
+import gc
 
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
-INPUT_FILE = 'data/responses/s1_no_sum_responses.csv'
-OUTPUT_FILE = 'data/responses/s1_sum_responses.csv'
+# CRITICAL FIX: Set HF_HOME to a local directory to avoid Permission Errors
+os.environ['HF_HOME'] = './local_model_cache'
 
-# List of columns to summarize
+# Input: The file with raw responses (e.g., s1_no_sum.csv)
+INPUT_FILE = 'data/responses/s1_no_sum_responses.csv' 
+
+# Output Prefixes for two separate files
+OUTPUT_FILE_ABS = 'data/responses/s1_sum1_responses.csv'
+OUTPUT_FILE_EXT = 'data/responses/s1_sum2_responses.csv'
+
+# Columns to summarize
 TARGET_COLUMNS = [
     'original_m_safechat', 
     'rt_es_m_safechat', 
-    'rt_da_safechat'
+    'rt_da_m_safechat'
 ]
 
-# Parameters for summarization
-MIN_LENGTH = 20       # Minimum words in abstractive summary
-MAX_LENGTH = 60       # Maximum words in abstractive summary
-MIN_INPUT_LENGTH = 30 # If text is shorter than this, we won't summarize it
+# Summarization Params
+# We switch to a lighter model to avoid Bus Error 10
+MODEL_NAME = "sshleifer/distilbart-cnn-12-6" 
+BATCH_SIZE = 8 
+MIN_LENGTH = 15
+MAX_LENGTH = 50
+
+def load_models():
+    print("Loading models...")
+    if not os.path.exists('./local_model_cache'):
+        os.makedirs('./local_model_cache')
+        
+    device = 0 if torch.cuda.is_available() else -1
+    print(f"Using device: {'GPU' if device == 0 else 'CPU'}")
+    
+    # Abstractive (DistilBART)
+    try:
+        abstractive_pipe = pipeline(
+            "summarization", 
+            model=MODEL_NAME, 
+            device=device,
+            batch_size=BATCH_SIZE
+        )
+    except Exception as e:
+        print(f"Error loading Abstractive Model: {e}")
+        return None, None
+
+    # Extractive (BERT)
+    try:
+        extractive_model = Summarizer()
+    except Exception as e:
+        print(f"Error loading BERT Summarizer: {e}")
+        return None, None
+        
+    return abstractive_pipe, extractive_model
+
+def summarize_batch_abstractive(pipe, texts):
+    """Summarizes a list of texts using the pipeline."""
+    try:
+        valid_inputs = []
+        indices = []
+        results = [""] * len(texts)
+        
+        for i, text in enumerate(texts):
+            # Only summarize if text is reasonably long
+            if len(str(text).split()) > 10: 
+                valid_inputs.append(str(text))
+                indices.append(i)
+            else:
+                results[i] = str(text) 
+
+        if not valid_inputs:
+            return results
+
+        # Run batch inference
+        summaries = pipe(
+            valid_inputs, 
+            max_length=MAX_LENGTH, 
+            min_length=MIN_LENGTH, 
+            do_sample=False, 
+            truncation=True
+        )
+        
+        for idx, summary in zip(indices, summaries):
+            results[idx] = summary['summary_text']
+            
+        return results
+    except Exception as e:
+        print(f"Batch Error: {e}")
+        return [str(t) for t in texts]
 
 def main():
-    # 1. Load Data
     if not os.path.exists(INPUT_FILE):
         print(f"Error: {INPUT_FILE} not found.")
         return
 
     df = pd.read_csv(INPUT_FILE)
-    print(f"Loaded {len(df)} rows from {INPUT_FILE}")
+    print(f"Loaded {len(df)} rows.")
 
-    # ---------------------------------------------------------
-    # 2. LOAD MODELS
-    # ---------------------------------------------------------
-    print("\nLoading models... (This may take a moment)")
-    
-    # Ensure local cache directory exists
-    if not os.path.exists('./local_model_cache'):
-        os.makedirs('./local_model_cache')
-    
-    # Check device (GPU is much faster)
-    device = 0 if torch.cuda.is_available() else -1
-    print(f"Using device: {'GPU' if device == 0 else 'CPU'}")
-    
-    # A. Abstractive Model (BART)
-    try:
-        print("Loading Abstractive Model (BART)...")
-        abstractive_pipe = pipeline(
-            "summarization", 
-            model="facebook/bart-large-cnn", 
-            device=device
-        )
-    except Exception as e:
-        print(f"Error loading abstractive model: {e}")
-        return
+    abs_pipe, ext_model = load_models()
+    if not abs_pipe: return
 
-    # B. Extractive Model (BERT)
-    try:
-        print("Loading Extractive Model (BERT)...")
-        extractive_model = Summarizer()
-    except Exception as e:
-        print(f"Error loading extractive model: {e}")
-        return
+    df_abs = df.copy()
+    df_ext = df.copy()
 
-    # ---------------------------------------------------------
-    # 3. GENERATE SUMMARIES FOR EACH COLUMN
-    # ---------------------------------------------------------
-    
     for col in TARGET_COLUMNS:
         if col not in df.columns:
-            print(f"Warning: Column '{col}' not found. Skipping.")
+            print(f"Skipping {col} (not found)")
             continue
             
-        print(f"\nProcessing column: '{col}'...")
+        print(f"\nProcessing {col}...")
+        original_texts = df[col].fillna("").astype(str).tolist()
         
-        # Ensure string type
-        df[col] = df[col].fillna("").astype(str)
+        # 1. Abstractive
+        print("  > Generating Abstractive Summaries...")
+        abs_summaries = []
+        for i in tqdm(range(0, len(original_texts), BATCH_SIZE)):
+            batch_texts = original_texts[i : i+BATCH_SIZE]
+            batch_sums = summarize_batch_abstractive(abs_pipe, batch_texts)
+            abs_summaries.extend(batch_sums)
+            
+            # AGGRESSIVE MEMORY CLEANUP
+            if i % (BATCH_SIZE * 10) == 0:
+                gc.collect()
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
         
-        abstractive_results = []
-        extractive_results = []
+        # Replace column in df_abs
+        df_abs[col] = abs_summaries
 
-        # Iterate with progress bar
-        for text in tqdm(df[col], desc=f"Summarizing {col}"):
-            word_count = len(text.split())
+        # 2. Extractive
+        print("  > Generating Extractive Summaries...")
+        ext_summaries = []
+        for text in tqdm(original_texts):
+            if len(text.split()) > 10:
+                try:
+                    summary = ext_model(text, ratio=0.5)
+                    ext_summaries.append(summary if summary else text)
+                except:
+                    ext_summaries.append(text)
+            else:
+                ext_summaries.append(text)
+        
+        # Replace column in df_ext
+        df_ext[col] = ext_summaries
 
-            # Skip summarization if text is too short or empty
-            if word_count < MIN_INPUT_LENGTH:
-                abstractive_results.append(text)
-                extractive_results.append(text)
-                continue
-
-            # --- Abstractive ---
-            try:
-                # Generate summary. truncating ensures we don't crash on huge texts
-                summary_abs = abstractive_pipe(
-                    text, 
-                    max_length=MAX_LENGTH, 
-                    min_length=MIN_LENGTH, 
-                    do_sample=False, 
-                    truncation=True
-                )
-                abstractive_results.append(summary_abs[0]['summary_text'])
-            except Exception as e:
-                # Fallback in case of model error, keep original
-                abstractive_results.append(text)
-
-            # --- Extractive ---
-            try:
-                # ratio=0.5 means keep top 50% of sentences
-                summary_ext = extractive_model(text, ratio=0.5) 
-                # If BERT returns empty string (sometimes happens on very short text), use original
-                if not summary_ext:
-                    summary_ext = text
-                extractive_results.append(summary_ext)
-            except Exception as e:
-                extractive_results.append(text)
-
-        # Save results to new columns
-        df[f'{col}_abstractive'] = abstractive_results
-        df[f'{col}_extractive'] = extractive_results
-
-    # ---------------------------------------------------------
-    # 4. SAVE RESULTS
-    # ---------------------------------------------------------
-    df.to_csv(OUTPUT_FILE, index=False)
-    print(f"\nSuccess! Saved all summaries to: {OUTPUT_FILE}")
+    # Save Files
+    df_abs.to_csv(OUTPUT_FILE_ABS, index=False)
+    print(f"\nSuccess! Abstractive summaries saved to {OUTPUT_FILE_ABS}")
     
-    # Preview
-    print("\n--- Preview (Row 0) ---")
-    first_col = TARGET_COLUMNS[0]
-    if f'{first_col}_abstractive' in df.columns:
-        print(f"ORIGINAL ({first_col}): {df[first_col].iloc[0][:100]}...")
-        print(f"ABSTRACTIVE: {df[f'{first_col}_abstractive'].iloc[0]}")
-        print(f"EXTRACTIVE: {df[f'{first_col}_extractive'].iloc[0]}")
+    df_ext.to_csv(OUTPUT_FILE_EXT, index=False)
+    print(f"Success! Extractive summaries saved to {OUTPUT_FILE_EXT}")
 
 if __name__ == "__main__":
     main()

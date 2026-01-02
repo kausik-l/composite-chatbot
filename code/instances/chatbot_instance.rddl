@@ -9,8 +9,8 @@ non-fluents nf_chatbot {
             // Stage 2: Model System
             sys_s1, sys_s2, sys_s3,
             
-            // Stage 3: Summarization
-            sum_yes, sum_no
+            // Stage 3: Summarization (Now with 2 variants)
+            sum_sum1, sum_sum2, sum_no
         };
     };
     
@@ -29,7 +29,8 @@ non-fluents nf_chatbot {
         valid_component(s2, sys_s2);
         valid_component(s2, sys_s3);
         
-        valid_component(s3, sum_yes);
+        valid_component(s3, sum_sum1);
+        valid_component(s3, sum_sum2);
         valid_component(s3, sum_no);
 
         // --- COSTS ---
@@ -42,8 +43,10 @@ non-fluents nf_chatbot {
         component_cost(sys_s2)       = 0.2;
         component_cost(sys_s3)       = 0.4;
         
-        component_cost(sum_yes)      = 0.2;
-        component_cost(sum_no)       = 0.0;
+        // Summarization Costs
+        component_cost(sum_sum1)     = 0.3; 
+        component_cost(sum_sum2)     = 0.1; // Extractive (Cheaper)
+        component_cost(sum_no)       = 0.0; 
     };
 }
 

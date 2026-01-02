@@ -12,9 +12,9 @@ from tqdm import tqdm
 # CONFIGURATION
 # ---------------------------------------------------------
 MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
-RESPONSES_FILE = 'data/responses/s3_no_sum_responses.csv'
+RESPONSES_FILE = 'data/responses/s3_sum2_responses.csv'
 MASTER_FILE = 'data/processed/processed_hiv.csv'
-OUTPUT_FILE = 'data/outcome/s3_no_sum.csv'
+OUTPUT_FILE = 'data/outcome/s3_sum2.csv'
 
 def main():
     print("1. Loading Datasets...")
@@ -60,7 +60,6 @@ def main():
     # 3. ENCODE & SCORE
     # ---------------------------------------------------------
     print(f"3. Loading Model ({MODEL_NAME})...")
-    # Check for MPS (Mac M1/M2) or CUDA, else CPU
     device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
     print(f"   Using device: {device}")
     
@@ -80,9 +79,9 @@ def main():
 
     # Dictionary mapping input column -> output score column
     cols_to_score = {
-        'original_m_safechat': 'original_m_safechat_outcome',
-        'rt_es_m_safechat':    'rt_es_m_safechat_outcome',
-        'rt_da_m_safechat':    'rt_da_m_safechat_outcome'
+        'original_m_safechat': 'original_outcome',
+        'rt_es_m_safechat':    'rt_es_outcome',
+        'rt_da_m_safechat':    'rt_da_outcome'
     }
 
     # A. Encode Ground Truth (Reference)
@@ -122,9 +121,6 @@ def main():
         # Move to CPU and convert to numpy array for saving
         final_scores[output_col] = scores.cpu().numpy()
 
-    # ---------------------------------------------------------
-    # 4. SAVE FINAL OUTPUT
-    # ---------------------------------------------------------
     print("4. Saving Data...")
     
     # Add scores to the dataframe
@@ -136,9 +132,12 @@ def main():
         'T', 
         'Z_race', 
         'Z_gender', 
-        'original_m_safechat_outcome', 
-        'rt_es_m_safechat_outcome', 
-        'rt_da_m_safechat_outcome'
+        'original_outcome', 
+        'rt_es_outcome', 
+        'rt_da_outcome',
+        'original_m_safechat_compression',
+        'rt_es_m_safechat_compression',
+        'rt_da_m_safechat_compression'
     ]
     
     # Verify columns exist before slicing

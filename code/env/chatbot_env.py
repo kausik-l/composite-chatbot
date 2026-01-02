@@ -14,7 +14,6 @@ class ChatbotPipelineEnv(RDDLEnv):
         self.reward_mode = reward_mode
         self.sampled_batch = None
         
-        # Track selections to load the correct file/column at the end
         self.current_paraphrase = None 
         self.current_system = None
         self.current_summary = None
@@ -29,10 +28,8 @@ class ChatbotPipelineEnv(RDDLEnv):
 
     def step(self, action):
         obs, rddl_reward, terminated, truncated, info = super().step(action)
-        # print("I am the reward:", rddl_reward)
         done = terminated or truncated
         
-        # Identify Action from RDDL action dict
         selected_comp = None
         for k, v in action.items():
             if v == 1 and "select_component" in k:
@@ -40,105 +37,85 @@ class ChatbotPipelineEnv(RDDLEnv):
                 break
         
         if selected_comp:
-            # Stage 1: Paraphrase
-            if "para_" in selected_comp:
-                self.current_paraphrase = selected_comp # e.g., para_none, para_spanish
-            
-            # Stage 2: System
-            elif "sys_" in selected_comp:
-                self.current_system = selected_comp # e.g., sys_s1
-            
-            # Stage 3: Summary
-            elif "sum_" in selected_comp:
-                self.current_summary = selected_comp # e.g., sum_yes, sum_no
+            if "para_" in selected_comp: self.current_paraphrase = selected_comp
+            elif "sys_" in selected_comp: self.current_system = selected_comp
+            elif "sum_" in selected_comp: self.current_summary = selected_comp
 
         fairness_penalty = 0.0
+        compression_reward = 0.0
+        quality_reward = 0.0
         raw_wrs = 0.0
         raw_die = 0.0
 
-        # CALCULATE REWARD ONLY AT THE END OF THE PIPELINE
         if done and self.current_paraphrase and self.current_system and self.current_summary:
             
-            # 1. Determine which file to load
-            # Format: s{1,2,3}_{sum,no_sum}.csv
-            # sys_s1 -> "1"
             sys_num = self.current_system.replace("sys_s", "") 
-            # sum_yes -> "sum", sum_no -> "no_sum"
-            sum_suffix = "sum" if self.current_summary == "sum_yes" else "no_sum"
             
-            filename = f"s{sys_num}_{sum_suffix}.csv"
+            # Determine Summary Suffix based on selection
+            if "sum1" in self.current_summary: sum_suffix = "sum1"
+            elif "sum2" in self.current_summary: sum_suffix = "sum2"
+            else: sum_suffix = "no_sum"
+            
+            # Construct filename: s{sys}_{suffix}_responses.csv
+            filename = f"s{sys_num}_{sum_suffix}_responses.csv"
             filepath = os.path.join(self.data_dir, filename)
             
-            # if os.path.exists(filepath):
-            # Load the specific dataset for this system configuration
+            # Fallback check
+            if not os.path.exists(filepath):
+                 filepath = os.path.join(self.data_dir, f"s{sys_num}_{sum_suffix}.csv")
+
             full_df = pd.read_csv(filepath)
-            
-            # Sample a batch
             n_sample = min(self.batch_size, len(full_df))
             self.sampled_batch = full_df.sample(n=n_sample).copy()
             
-            # 2. Determine which column to use based on Paraphrase choice
-            # para_none -> original_m_safechat_outcome
-            # para_spanish -> rt_es_m_safechat_outcome
-            # para_danish -> rt_da_m_safechat_outcome
+            target_col = "original_outcome"
+            if self.current_paraphrase == "para_spanish": target_col = "rt_es_outcome"
+            elif self.current_paraphrase == "para_danish": target_col = "rt_da_outcome"
             
-            target_col = "original_m_safechat_outcome"
-            if self.current_paraphrase == "para_spanish":
-                target_col = "rt_es_m_safechat_outcome"
-            elif self.current_paraphrase == "para_danish":
-                target_col = "rt_da_m_safechat_outcome"
-            
-            # 3. Calculate Metrics (WRS / DIE)
-            # Protected Attribute: Z_race (1=AA, 2=EA, 0=None)
-            
+            comp_col = target_col.replace("_outcome", "_m_safechat_compression")
+
+            # 1. QUALITY REWARD (Cosine Similarity)
             if target_col in self.sampled_batch.columns:
-                # WRS (Weighted Rejection Score)
+                avg_sim = self.sampled_batch[target_col].mean()
+                quality_reward = avg_sim 
+
+            # 2. COMPRESSION REWARD
+            if comp_col in self.sampled_batch.columns:
+                avg_comp = self.sampled_batch[comp_col].mean()
+                compression_reward = avg_comp 
+            
+            # 3. FAIRNESS METRICS
+            if target_col in self.sampled_batch.columns:
+                # WRS: Summing Race AND Gender
+                wrs_race = calc_wrs(self.sampled_batch, 'Z_race', target_col)
+                
+                wrs_gender = calc_wrs(self.sampled_batch, 'Z_gender', target_col)
+                
+                raw_wrs = (wrs_race + wrs_gender)/2
+
+                # DIE
                 try:
-                    # We use Z_race. metric_utils treats >0 as "protected group"
-                    # Ideally we compare AA (1) vs Baseline (0) or AA (1) vs EA (2)
-                    # The generic calc_wrs checks abs(mean(Y|Z=1) - mean(Y|Z=0))
-                    # Here, Z=0 is Baseline (Anonymous). Z=1 is AA.
-                    wrs_race = calc_wrs(self.sampled_batch, 'Z_race', target_col)
-                    raw_wrs = wrs_race
-                except: 
-                    raw_wrs = 0.0
+                    metrics = compute_arc_metrics(
+                        self.sampled_batch, 
+                        treatment_col='T',       
+                        outcome_col=target_col, 
+                        confounders=['Z_race', 'Z_gender']
+                    )
+                    raw_die = abs(metrics['DIE_Confounding'])
+                except: raw_die = 0.0
 
-                # DIE (Causal Metric)
-                # We need a treatment column T (which exists in your CSV)
-                # try:
-                    # T=0 (Anonymous), T=1 (Identity Revealed)
-                metrics = compute_arc_metrics(
-                    self.sampled_batch, 
-                    treatment_col='T',       
-                    outcome_col=target_col, 
-                    confounders=['Z_race', 'Z_gender']
-                )
-                raw_die = abs(metrics['DIE_Confounding'])
-                raw_ate = abs(metrics['ATE'])
-                # except: 
-                #     raw_die = 0.0
+                if self.reward_mode == "WRS": fairness_penalty += (raw_wrs * 100.0)
+                elif self.reward_mode == "DIE": fairness_penalty += (raw_die * 100.0)
+                elif self.reward_mode == "BOTH": fairness_penalty += (raw_wrs * 100.0) + (raw_die * 100.0)
 
-                # 4. Apply Penalty
-                if self.reward_mode == "WRS":
-                    fairness_penalty += (raw_wrs * 100.0)
-                elif self.reward_mode == "DIE":
-                    fairness_penalty += (raw_die * 100.0)
-                elif self.reward_mode == "BOTH":
-                    fairness_penalty += (raw_wrs * 100.0) + (raw_die * 100.0)
 
-            # else:
-            #     # File missing (e.g. s3_sum.csv not generated yet)
-            #     # Penalty for invalid path, but allow simulation to continue
-            #     fairness_penalty = 5.0 
-
-        # Total Reward = (Negative Cost from RDDL) - Fairness Penalty
-        total_reward = rddl_reward - fairness_penalty 
-
-        # print("COST:",abs(rddl_reward))
+        total_reward = rddl_reward + quality_reward + compression_reward - fairness_penalty
         
         if 'metrics' not in info: info['metrics'] = {}
         info['metrics']['fairness_penalty'] = fairness_penalty
-        info['metrics']['rddl_cost'] = abs(rddl_reward)
+        info['metrics']['compression_reward'] = compression_reward
+        info['metrics']['quality_reward'] = quality_reward
+        info['metrics']['rddl_cost'] = abs(rddl_reward) 
         info['metrics']['raw_wrs'] = float(raw_wrs)
         info['metrics']['raw_die'] = float(raw_die)
 
