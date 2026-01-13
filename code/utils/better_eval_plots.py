@@ -49,9 +49,17 @@ def plot_violin(df, metric):
         x="Agent",
         y=metric,
         inner="quartile",
-        cut=0
+        cut=0,
+        bw_adjust=1.5
     )
+    min_r = df["Total Reward"].min()
+    max_r = df["Total Reward"].max()
+
+    plt.ylim(min_r, max_r)
+
+    # plt.ylim(-1.0, 1.0)
     plt.title(f"Distribution of {metric} Across Episodes")
+    plt.ylabel(f"{metric} (Higher is Better)")
     plt.xticks(rotation=20)
     plt.tight_layout()
     plt.savefig(f"{OUTPUT_DIR}/violin_{metric.replace(' ','_')}.png", dpi=300)
@@ -71,8 +79,34 @@ def plot_pareto(df):
         hue="Agent",
         s=180
     )
+
+    # Ideal reference point
+    ideal_reward = df["Total Reward"].max()
+    ideal_cost = df["Workflow Cost"].min()
+
+    plt.scatter(
+        ideal_cost,
+        ideal_reward,
+        marker="*",
+        s=300,
+        c="black",
+        label="Ideal (High Reward, Low Cost)",
+        zorder=5
+    )
+
     plt.title("Pareto Trade-off: Reward vs Cost")
+    plt.xlabel("Workflow Cost (Lower is Better)")
+    plt.ylabel("Total Reward (Higher is Better)")
+
+    plt.legend(
+        fontsize=14,
+        title_fontsize=15,
+        markerscale=0.8,
+        loc="upper right"
+    )
+
     plt.tight_layout()
+
     plt.savefig(f"{OUTPUT_DIR}/pareto_reward_cost.png", dpi=300)
     plt.close()
 
@@ -182,7 +216,7 @@ def main():
     plot_pareto(df)
 
     # Heatmaps
-    for m in ["Total Reward", "WRS"]:
+    for m in ["Total Reward", "WRS", "DIE"]:
         plot_heatmap(df, m)
 
     # Stability
