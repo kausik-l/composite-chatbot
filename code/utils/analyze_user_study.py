@@ -14,16 +14,16 @@ OUTPUT_DIR = "data/user_study_results"
 # -----------------------------
 WORKFLOW_ORDER = ["W1", "W2", "W3"]
 
-# pick your canonical colors once (match your current bar plot if you want)
+# Use fixed HEX codes (Matplotlib tab colors) for identical appearance everywhere
 WORKFLOW_COLORS = {
-    "W1": "green",
-    "W2": "red",
-    "W3": "orange"
+    "W1": "#2ca02c",  # tab:green
+    "W2": "#d62728",  # tab:red
+    "W3": "#ff7f0e",  # tab:orange
 }
 
-def enforce_workflow_order(series_or_col):
-    """Make workflow labels categorical so seaborn/pandas respect the same order."""
-    return pd.Categorical(series_or_col, categories=WORKFLOW_ORDER, ordered=True)
+def enforce_workflow_order(x):
+    return pd.Categorical(x, categories=WORKFLOW_ORDER, ordered=True)
+
 
 
 def load_and_prep_data():
@@ -149,12 +149,14 @@ def analyze_rh1_correctness(df):
     df_melt['Workflow'] = enforce_workflow_order(df_melt['Workflow'])
 
     sns.boxplot(
-        x='Workflow', y='Score', data=df_melt,
-        order=WORKFLOW_ORDER,
-        palette=WORKFLOW_COLORS,
-        showmeans=True, meanline=True,
-        meanprops={"color": "black", "linewidth": 1.5, "linestyle": "--"}  # optional: keep consistent too
+    x="Workflow", y="Score", data=df_melt,
+    order=WORKFLOW_ORDER,
+    palette=WORKFLOW_COLORS,
+    saturation=1,              # <-- key: prevents seaborn from muting colors
+    showmeans=True, meanline=True,
+    meanprops={"color": "black", "linewidth": 1.5, "linestyle": "--"}
     )
+
     plt.title("RH1: Workflow Correctness (Avg of Q1 & Q2)")
     plt.ylabel("Likert Score (1-5)")
     plt.ylim(1, 5.5)
@@ -219,12 +221,14 @@ def analyze_rh2_fairness(df):
         df_melt['Workflow'] = enforce_workflow_order(df_melt['Workflow'])
 
         sns.boxplot(
-            x='Workflow', y='Score', data=df_melt,
+            x="Workflow", y="Score", data=df_melt,
             order=WORKFLOW_ORDER,
             palette=WORKFLOW_COLORS,
+            saturation=1,              # <-- key: prevents seaborn from muting colors
             showmeans=True, meanline=True,
             meanprops={"color": "black", "linewidth": 1.5, "linestyle": "--"}
         )
+
         plt.title(f"RH2: Fairness ({label})")
         plt.ylim(1, 5.5)
         plt.tight_layout()
@@ -263,10 +267,17 @@ def analyze_rh3_efficiency(df):
         mapped_choices = combined_choices.map(cost_map)
         
         counts = mapped_choices.value_counts()
+        
+
         print(counts)
         
         cats = ['W1', 'W2', 'W3']
-        counts = counts.reindex(cats, fill_value=0)
+        counts = counts.reindex(WORKFLOW_ORDER, fill_value=0)
+
+        ax = counts.plot(
+            kind="bar",
+            color=[WORKFLOW_COLORS[w] for w in WORKFLOW_ORDER]
+        )
         
         # Chi-Square
         # We now have 2 observations per user, so N is effectively doubled for the test of preferences
