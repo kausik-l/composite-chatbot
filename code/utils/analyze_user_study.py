@@ -9,6 +9,23 @@ import os
 INPUT_FILE = "data/user_study.csv"
 OUTPUT_DIR = "data/user_study_results"
 
+# -----------------------------
+# Consistent styling everywhere
+# -----------------------------
+WORKFLOW_ORDER = ["W1", "W2", "W3"]
+
+# pick your canonical colors once (match your current bar plot if you want)
+WORKFLOW_COLORS = {
+    "W1": "green",
+    "W2": "red",
+    "W3": "orange"
+}
+
+def enforce_workflow_order(series_or_col):
+    """Make workflow labels categorical so seaborn/pandas respect the same order."""
+    return pd.Categorical(series_or_col, categories=WORKFLOW_ORDER, ordered=True)
+
+
 def load_and_prep_data():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
@@ -109,21 +126,41 @@ def analyze_rh1_correctness(df):
             print(f"    {a} vs {b}: p_adj={min(p_w*3, 1.0):.4f}")
     # except ValueError: pass
 
+    # plt.figure(figsize=(8, 6))
+    # df_melt = df.melt(value_vars=metrics, var_name='Workflow', value_name='Score')
+    # # Update map to reflect calculated average
+    # df_melt['Workflow'] = df_melt['Workflow'].map({'W1_Avg_Corr':'W1', 'W2_Avg_Corr':'W2', 'W3_Avg_Corr':'W3'})
+    
+    # sns.boxplot(
+    #     x='Workflow', y='Score', data=df_melt, palette="Set2",
+    #     showmeans=True, meanline=True, 
+    #     meanprops={"color": "red", "linewidth": 1.5, "linestyle": "--"}
+    # )
+    # plt.title("RH1: Workflow Correctness (Avg of Q1 & Q2)")
+    # plt.ylabel("Likert Score (1-5)")
+    # plt.ylim(1, 5.5)
+    # plt.tight_layout()
+    # plt.savefig(os.path.join(OUTPUT_DIR, "rh1_correctness_all.png"))
     plt.figure(figsize=(8, 6))
     df_melt = df.melt(value_vars=metrics, var_name='Workflow', value_name='Score')
-    # Update map to reflect calculated average
-    df_melt['Workflow'] = df_melt['Workflow'].map({'W1_Avg_Corr':'W1', 'W2_Avg_Corr':'W2', 'W3_Avg_Corr':'W3'})
-    
+    df_melt['Workflow'] = df_melt['Workflow'].map({
+        'W1_Avg_Corr':'W1', 'W2_Avg_Corr':'W2', 'W3_Avg_Corr':'W3'
+    })
+    df_melt['Workflow'] = enforce_workflow_order(df_melt['Workflow'])
+
     sns.boxplot(
-        x='Workflow', y='Score', data=df_melt, palette="Set2",
-        showmeans=True, meanline=True, 
-        meanprops={"color": "red", "linewidth": 1.5, "linestyle": "--"}
+        x='Workflow', y='Score', data=df_melt,
+        order=WORKFLOW_ORDER,
+        palette=WORKFLOW_COLORS,
+        showmeans=True, meanline=True,
+        meanprops={"color": "black", "linewidth": 1.5, "linestyle": "--"}  # optional: keep consistent too
     )
     plt.title("RH1: Workflow Correctness (Avg of Q1 & Q2)")
     plt.ylabel("Likert Score (1-5)")
     plt.ylim(1, 5.5)
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, "rh1_correctness_all.png"))
+
     print("Saved plot: rh1_correctness_all.png")
 
 # ---------------------------------------------------------
@@ -160,20 +197,40 @@ def analyze_rh2_fairness(df):
                     print(f"    {a} vs {b}: p_adj={min(p_w*3, 1.0):.4f}")
         except: pass
         
+        # plt.figure(figsize=(8, 6))
+        # df_melt = sub_df.melt(value_vars=metrics, var_name='Workflow', value_name='Score')
+        # df_melt['Workflow'] = df_melt['Workflow'].map({'W1_Fair_Overall':'W1', 'W2_Fair_Overall':'W2', 'W3_Fair_Overall':'W3'})
+        
+        # sns.boxplot(
+        #     x='Workflow', y='Score', data=df_melt, palette="Set3",
+        #     showmeans=True, meanline=True, 
+        #     meanprops={"color": "blue", "linewidth": 1.5, "linestyle": "--"}
+        # )
+        # plt.title(f"RH2: Fairness ({label})")
+        # plt.ylim(1, 5.5)
+        # plt.tight_layout()
+        # safe_label = label.split()[0]
+        # plt.savefig(os.path.join(OUTPUT_DIR, f"rh2_fairness_{safe_label}.png"))
         plt.figure(figsize=(8, 6))
         df_melt = sub_df.melt(value_vars=metrics, var_name='Workflow', value_name='Score')
-        df_melt['Workflow'] = df_melt['Workflow'].map({'W1_Fair_Overall':'W1', 'W2_Fair_Overall':'W2', 'W3_Fair_Overall':'W3'})
-        
+        df_melt['Workflow'] = df_melt['Workflow'].map({
+            'W1_Fair_Overall':'W1', 'W2_Fair_Overall':'W2', 'W3_Fair_Overall':'W3'
+        })
+        df_melt['Workflow'] = enforce_workflow_order(df_melt['Workflow'])
+
         sns.boxplot(
-            x='Workflow', y='Score', data=df_melt, palette="Set3",
-            showmeans=True, meanline=True, 
-            meanprops={"color": "blue", "linewidth": 1.5, "linestyle": "--"}
+            x='Workflow', y='Score', data=df_melt,
+            order=WORKFLOW_ORDER,
+            palette=WORKFLOW_COLORS,
+            showmeans=True, meanline=True,
+            meanprops={"color": "black", "linewidth": 1.5, "linestyle": "--"}
         )
         plt.title(f"RH2: Fairness ({label})")
         plt.ylim(1, 5.5)
         plt.tight_layout()
         safe_label = label.split()[0]
         plt.savefig(os.path.join(OUTPUT_DIR, f"rh2_fairness_{safe_label}.png"))
+
         print(f"Saved plot: rh2_fairness_{safe_label}.png")
 
 # ---------------------------------------------------------
@@ -221,13 +278,26 @@ def analyze_rh3_efficiency(df):
             except: pass
             
         plt.figure(figsize=(8, 6))
-        counts.plot(kind='bar', color=['green', 'red', 'orange'])
+        counts = counts.reindex(WORKFLOW_ORDER, fill_value=0)
+
+        ax = counts.plot(
+            kind="bar",
+            color=[WORKFLOW_COLORS[w] for w in WORKFLOW_ORDER]
+        )
         plt.title(f"RH3: Efficiency Preference ({label})")
         plt.ylabel("Total Count (Both Examples)")
         plt.xticks(rotation=0)
         plt.tight_layout()
         safe_label = label.split()[0]
         plt.savefig(os.path.join(OUTPUT_DIR, f"rh3_effic_{safe_label}.png"))
+        # plt.figure(figsize=(8, 6))
+        # counts.plot(kind='bar', color=['green', 'red', 'orange'])
+        # plt.title(f"RH3: Efficiency Preference ({label})")
+        # plt.ylabel("Total Count (Both Examples)")
+        # plt.xticks(rotation=0)
+        # plt.tight_layout()
+        # safe_label = label.split()[0]
+        # plt.savefig(os.path.join(OUTPUT_DIR, f"rh3_effic_{safe_label}.png"))
         print(f"Saved plot: rh3_effic_{safe_label}.png")
 
 # ---------------------------------------------------------
